@@ -15,7 +15,8 @@ import org.json.JSONObject;
 public class JsonWordSearch {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        // Lista de URLs .json
+        
+        // List of .json URLs
         List<String> jsonLinks = new ArrayList<>();
         jsonLinks.add("https://hydralinks.cloud/sources/gog.json");
         jsonLinks.add("https://hydralinks.cloud/sources/fitgirl.json");
@@ -28,29 +29,29 @@ public class JsonWordSearch {
         jsonLinks.add("https://hydralinks.cloud/sources/steamrip.json");
         jsonLinks.add("https://hydralinks.cloud/sources/steamrip-software.json");
 
-        // Palavra a buscar
+        // Key to search
         System.out.print("Game key: ");
-        String palavraDesejada = scanner.nextLine();
+        String gameKey = scanner.nextLine();
 
-        // Itera sobre os links e busca a palavra nos arquivos JSON
+        // Iterate over the links and search for the word in the JSON files
         for (String link : jsonLinks) {
             try {
-                // Faz a requisição HTTP e obtém o JSON
+                // Make the HTTP request and get the JSON
                 String jsonContent = fetchJsonFromUrl(link);
 
-                // Procura a palavra desejada no JSON
-                boolean found = searchWordInJson(jsonContent, palavraDesejada);
+                // Search for the desired word in JSON
+                boolean found = searchWordInJson(jsonContent, gameKey);
 
-                // Imprime o resultado
-                System.out.println("Palavra \"" + palavraDesejada + "\" encontrada no link " + link + ": " + found);
+                // Print the result
+                System.out.println("Key \"" + gameKey + "\" found in the link " + link + ": " + found);
             } catch (Exception e) {
-                System.out.println("Erro ao processar o link " + link + ": " + e.getMessage());
+                System.out.println("Error processing the link " + link + ": " + e.getMessage());
             }
         }
         scanner.close();
     }
 
-    // Faz uma requisição HTTP para obter o conteúdo do JSON
+    // Make an HTTP request to obtain the JSON content
     private static String fetchJsonFromUrl(String urlString) throws Exception {
         URL url = new URL(urlString);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -66,16 +67,16 @@ public class JsonWordSearch {
         }
     }
 
-    // Busca uma palavra específica em um JSON (case insensitive)
+    // Search for a specific word in JSON (case insensitive)
     private static boolean searchWordInJson(String jsonContent, String palavra) {
         JSONObject jsonObject = new JSONObject(jsonContent);
         String jsonString = jsonObject.toString();
 
-        // Define a palavra como um padrão case insensitive
+        // Defines the word as a case insensitive pattern
         Pattern pattern = Pattern.compile(Pattern.quote(palavra), Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(jsonString);
 
-        // Retorna true se o padrão for encontrado
+        // Returns true if pattern is found
         return matcher.find();
     }
 }
