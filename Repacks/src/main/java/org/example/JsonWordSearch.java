@@ -21,7 +21,7 @@ public class JsonWordSearch {
         jsonLinks.add("https://hydralinks.cloud/sources/fitgirl.json");
 
         // Palavra a buscar
-        System.out.print("Digite uma palavra chave do jogo: ");
+        System.out.print("Game key: ");
         String palavraDesejada = scanner.nextLine();
 
         // Itera sobre os links e busca a palavra nos arquivos JSON
