@@ -19,6 +19,14 @@ public class JsonWordSearch {
         List<String> jsonLinks = new ArrayList<>();
         jsonLinks.add("https://hydralinks.cloud/sources/gog.json");
         jsonLinks.add("https://hydralinks.cloud/sources/fitgirl.json");
+        jsonLinks.add("https://hydralinks.cloud/sources/xatab.json");
+        jsonLinks.add("https://hydralinks.cloud/sources/tinyrepacks.json");
+        jsonLinks.add("https://hydralinks.cloud/sources/onlinefix.json");
+        jsonLinks.add("https://hydralinks.cloud/sources/kaoskrew.json");
+        jsonLinks.add("https://hydralinks.cloud/sources/empress.json");
+        jsonLinks.add("https://hydralinks.cloud/sources/dodi.json");
+        jsonLinks.add("https://hydralinks.cloud/sources/steamrip.json");
+        jsonLinks.add("https://hydralinks.cloud/sources/steamrip-software.json");
 
         // Palavra a buscar
         System.out.print("Game key: ");
