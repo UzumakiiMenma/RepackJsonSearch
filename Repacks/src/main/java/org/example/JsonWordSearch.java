@@ -7,16 +7,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class JsonWordSearch {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
-        // List of .json URLs
+
+        // List of JSON URLs
         List<String> jsonLinks = new ArrayList<>();
         jsonLinks.add("https://hydralinks.cloud/sources/gog.json");
         jsonLinks.add("https://hydralinks.cloud/sources/fitgirl.json");
@@ -29,29 +28,24 @@ public class JsonWordSearch {
         jsonLinks.add("https://hydralinks.cloud/sources/steamrip.json");
         jsonLinks.add("https://hydralinks.cloud/sources/steamrip-software.json");
 
-        // Key to search
-        System.out.print("Game key: ");
-        String gameKey = scanner.nextLine();
+        // Keyword to search for
+        System.out.print("Enter the game keyword: ");
+        String keyword = scanner.nextLine();
 
-        // Iterate over the links and search for the word in the JSON files
+        // Iterate through links and search for the keyword in JSON files
         for (String link : jsonLinks) {
             try {
-                // Make the HTTP request and get the JSON
+                System.out.println("\nSearching in: " + link);
                 String jsonContent = fetchJsonFromUrl(link);
-
-                // Search for the desired word in JSON
-                boolean found = searchWordInJson(jsonContent, gameKey);
-
-                // Print the result
-                System.out.println("Key \"" + gameKey + "\" found in the link " + link + ": " + found);
+                searchAndDisplayResults(jsonContent, keyword);
             } catch (Exception e) {
-                System.out.println("Error processing the link " + link + ": " + e.getMessage());
+                System.out.println("Error processing link " + link + ": " + e.getMessage());
             }
         }
         scanner.close();
     }
 
-    // Make an HTTP request to obtain the JSON content
+    // Makes an HTTP request to fetch the JSON content
     private static String fetchJsonFromUrl(String urlString) throws Exception {
         URL url = new URL(urlString);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -67,16 +61,40 @@ public class JsonWordSearch {
         }
     }
 
-    // Search for a specific word in JSON (case insensitive)
-    private static boolean searchWordInJson(String jsonContent, String palavra) {
-        JSONObject jsonObject = new JSONObject(jsonContent);
-        String jsonString = jsonObject.toString();
+    // Searches and displays formatted results
+    private static void searchAndDisplayResults(String jsonContent, String keyword) {
+        JSONArray jsonArray = new JSONArray(jsonContent); // Convert JSON to Array
+        boolean foundSomething = false;
 
-        // Defines the word as a case insensitive pattern
-        Pattern pattern = Pattern.compile(Pattern.quote(palavra), Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(jsonString);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject item = jsonArray.getJSONObject(i);
+            String title = item.optString("title", "");
+            String fileSize = item.optString("fileSize", "Unknown");
+            JSONArray uris = item.optJSONArray("uris");
 
-        // Returns true if pattern is found
-        return matcher.find();
+            if (title.toLowerCase().contains(keyword.toLowerCase())) {
+                foundSomething = true;
+                System.out.println("--------------------------------");
+                System.out.println("Title: " + title);
+                System.out.println("File Size: " + fileSize);
+
+                // Get the first magnet link
+                if (uris != null) {
+                    for (int j = 0; j < uris.length(); j++) {
+                        String link = uris.getString(j);
+                        if (link.startsWith("magnet")) {
+                            System.out.println("Magnet Link: " + link);
+                            break;
+                        }
+                    }
+                } else {
+                    System.out.println("Magnet Link: Not available");
+                }
+            }
+        }
+
+        if (!foundSomething) {
+            System.out.println("No results found.");
+        }
     }
 }
